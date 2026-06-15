@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Ping and MTR Test
+      run: |
+        nc -zv -w 5 ${{ secrets.SSH_HOST }} 22
+
     - name: Deploy via SSH
       uses: appleboy/ssh-action@master
       with:
