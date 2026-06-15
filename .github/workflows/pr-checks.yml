@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: ununt-latest
+    runs-on: ununtu-latest
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
