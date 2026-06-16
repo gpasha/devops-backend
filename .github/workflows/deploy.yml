@@ -25,11 +25,11 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         timeout: 90s
-        # script: |
-        #   whoami
-        #   uptime
         script: |
-          cd /var/www/myapp/backend
-          git pull origin main
-          cd /var/www/myapp
-          docker compose up --build -d backend
+          whoami
+          uptime
+        # script: |
+        #   cd /var/www/myapp/backend
+        #   git pull origin main
+        #   cd /var/www/myapp
+        #   docker compose up --build -d backend
