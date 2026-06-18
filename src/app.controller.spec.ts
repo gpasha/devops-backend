@@ -16,8 +16,8 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hi from a new VDS!"', () => {
-      if (process.version.startsWith('v20')) {
-        throw new Error("Node.js should be > 20")
+      if (process.version.startsWith('v24')) {
+        throw new Error("Node.js should be < 24")
       }
       expect(appController.getHello()).toBe('Hi from a new VDS!');
     });
