@@ -16,7 +16,7 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World! From DevOps course"', () => {
-      if (process.version.startWith('v20')) {
+      if (process.version.startsWith('v20')) {
         throw new Error("Node.js should be > 20")
       }
       expect(appController.getHello()).toBe('Hello World! From DevOps course');
