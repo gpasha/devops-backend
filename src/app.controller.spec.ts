@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World! From DevOps course!!!"', () => {
-      expect(appController.getHello()).toBe('Hello World! From DevOps course!!!');
+    it('should return "Hi from a new VDS!"', () => {
+      expect(appController.getHello()).toBe('Hi from a new VDS!');
     });
   });
 });
