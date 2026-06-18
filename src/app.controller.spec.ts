@@ -15,11 +15,11 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World! From DevOps course"', () => {
+    it('should return "Hi from a new VDS!"', () => {
       if (process.version.startsWith('v20')) {
         throw new Error("Node.js should be > 20")
       }
-      expect(appController.getHello()).toBe('Hello World! From DevOps course');
+      expect(appController.getHello()).toBe('Hi from a new VDS!');
     });
   });
 });
