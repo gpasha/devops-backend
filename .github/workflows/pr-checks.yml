@@ -11,9 +11,6 @@ jobs:
     strategy:
       matrix:
         node-version: [24]
-        include:
-          - node-version: 24
-            experimental: true
       fail-fast: false
     continue-on-error: ${{ matrix.experimental == true }}
     steps:
