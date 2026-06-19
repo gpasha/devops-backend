@@ -50,8 +50,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          JOB_STATUS="${{ job.status }}"
-          if [ "$JOB_STATUS" = "success" ]; then
+          DEPLOY_STATUS="${{ needs.deploy.result }}"
+          if [ "$DEPLOY_STATUS" = "success" ]; then
             LOG_OUTPUT=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --log | grep -A10 "Notify Telegram")
             
             curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
