@@ -46,4 +46,16 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
             -d "text=$TEXT"
+      - name: Send Success Message (using GitHub CLI)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          JOB_STATUS="${{ job.status }}"
+          if [ "$JOB_STATUS" = "success" ]; then
+            LOG_OUTPUT=$(gh run view ${{ github.run_id }} --log | grep -A10 "Notify Telegram")
+            
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "text=$LOG_OUTPUT"
+          fi
         
