@@ -5,44 +5,46 @@ on:
     branches: [main]
  
 jobs:
-  checks:
-    uses: ./.github/workflows/pr-checks.yml
- 
-  deploy:
-    needs: checks
+  # checks:
+  #   uses: ./.github/workflows/pr-checks.yml
+
+  build:
+    # needs: [checks]
     runs-on: ubuntu-latest
- 
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /var/www/myapp/backend
-            git pull origin main
-            cd /var/www/myapp
-            docker compose up --build -d backend
-  notify:
-    needs: [checks, deploy]
-    runs-on: ubuntu-latest
-    if: always()
 
     steps:
-      - name: Notify Telegram
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ vars.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+      
+      - name: Build and Push docker image
+        env:
+          IMAGE_SHA: ${{ vars.DOCKER_USER }}/backend-simple:sha-${{ github.sha }}
+          IMAGE_LATEST: ${{ vars.DOCKER_USER }}/backend-simple:latest
         run: |
-          CHECKS_STATUS="${{ needs.checks.result }}"
-          DEPLOY_STATUS="${{ needs.deploy.result }}"
-
-          if [ "$CHECKS_STATUS" != "success" ]; then
-            TEXT="❌ Тесты упали%0A${{ github.repository }} @ ${{ github.ref_name }}%0AСмотри: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          elif [ "$DEPLOY_STATUS" != "success" ]; then
-            TEXT="❌ Деплой упал%0A${{ github.repository }} @ ${{ github.ref_name }}%0AСмотри: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          else
-            TEXT="✅ Деплой успешен%0A${{ github.repository }} @ ${{ github.ref_name }}%0AСделал: ${{ github.actor }}"
-          fi
-
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d "text=$TEXT"
+          docker build -t $IMAGE_SHA -t $IMAGE_LATEST .
+          docker push $IMAGE_SHA
+          docker push $IMAGE_LATEST
+ 
+  # deploy:
+  #   needs: [checks, build]
+  #   runs-on: ubuntu-latest
+ 
+  #   steps:
+  #     - name: Deploy via SSH
+  #       uses: appleboy/ssh-action@v1.0.3
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USER }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         script: |
+  #           cd /var/www/myapp/backend
+  #           git pull origin main
+  #           cd /var/www/myapp
+  #           docker compose up --build -d backend
+  # notify:
+  #   needs: [checks, deploy]
+  #   uses: ./.github/workflows/notify.yml
+  #   if: always()
