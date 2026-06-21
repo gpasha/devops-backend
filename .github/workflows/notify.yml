@@ -2,6 +2,16 @@ name: Notify
  
 on:
   workflow_call:
+    inputs:
+      checks_result:
+        required: true
+        type: string
+      build_result:
+        required: true
+        type: string
+      deploy_result:
+        required: true
+        type: string
     secrets:
       TELEGRAM_BOT_TOKEN:
         required: true
@@ -15,11 +25,14 @@ jobs:
     steps:
       - name: Notify Telegram
         run: |
-          CHECKS_STATUS="${{ needs.checks.result }}"
-          DEPLOY_STATUS="${{ needs.deploy.result }}"
+          CHECKS_STATUS="${{ inputs.checks_result }}"
+          BUILD_STATUS="${{ inputs.build_result}}"
+          DEPLOY_STATUS="${{ inputs.deploy_result}}"
 
           if [ "$CHECKS_STATUS" != "success" ]; then
             TEXT="❌ Тесты упали%0A${{ github.repository }} @ ${{ github.ref_name }}%0AСмотри: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          elif [ "$BUILD_STATUS" != "success" ]; then
+            TEXT="❌ Билд упал%0A${{ github.repository }} @ ${{ github.ref_name }}%0AСмотри: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           elif [ "$DEPLOY_STATUS" != "success" ]; then
             TEXT="❌ Деплой упал%0A${{ github.repository }} @ ${{ github.ref_name }}%0AСмотри: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           else
