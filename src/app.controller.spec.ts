@@ -15,12 +15,12 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hi from a new VDS!!! Version 3 (week4)"', () => {
+    it('should return "Hi from a new VDS!!! A new version from week5!"', () => {
       if (process.version.startsWith('v25')) {
         throw new Error('Node.js should be < 25');
       }
       expect(appController.getHello()).toBe(
-        'Hi from a new VDS!!! Version 3 (week4)',
+        'Hi from a new VDS!!! A new version from week5!',
       );
     });
   });
