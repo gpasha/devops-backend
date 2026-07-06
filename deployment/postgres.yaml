@@ -15,7 +15,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: backend-config
-              key: DB_HOST
+              key: DB_NAME
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
