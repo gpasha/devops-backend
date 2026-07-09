@@ -1,0 +1,23 @@
+name: Deploy
+ 
+on:
+  workflow_call:
+    inputs:
+      image_sha:
+        required: true
+        type: string
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+
+      - name: Deploy to k3s
+        run: |
+          kubectl set image deployment/backend-api backend=${{ inputs.image_sha }}
+          kubectl rollout status deployment/backend-api --timeout=120s

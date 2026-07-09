@@ -1,7 +1,8 @@
 name: CI/CD Pipeline
  
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
  
 jobs:
   checks:
@@ -14,7 +15,7 @@ jobs:
 
   deploy:
     needs: [build]
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-k8s.yml
     with:
       image_sha: ${{ needs.build.outputs.image_sha }}
     secrets: inherit
