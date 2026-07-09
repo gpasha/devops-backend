@@ -19,5 +19,5 @@ jobs:
 
       - name: Deploy to k3s
         run: |
-          kubectl set image deployment/backend backend=${{ inputs.image_sha }}
-          kubectl rollout status deployment/backend --timeout=120s
+          kubectl set image deployment/backend-api backend=${{ inputs.image_sha }}
+          kubectl rollout status deployment/backend-api --timeout=120s
