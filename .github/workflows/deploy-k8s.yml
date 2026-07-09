@@ -12,12 +12,17 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
       - name: Configure kubectl
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
 
       - name: Deploy to k3s
+        env:
+          IMAGE: ${{ inputs.image_sha }}
         run: |
-          kubectl set image deployment/backend-api backend=${{ inputs.image_sha }}
+          envsubst '$IMAGE' < manifests/backend.yaml | kubectl apply -f -
           kubectl rollout status deployment/backend-api --timeout=120s
