@@ -17,6 +17,13 @@ spec:
       containers:
         - name: backend
           image: ${IMAGE}
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "120m"
+              memory: "310Mi"
           ports:
             - containerPort: 3000
           envFrom:
