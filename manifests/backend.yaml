@@ -33,23 +33,26 @@ spec:
                 name: backend-secret
           startupProbe:
             httpGet:
-              path: app/health
+              path: /app/health
               port: 3000
             failureThreshold: 12    # 12 × 5 сек = 1 минута на старт
+            timeoutSeconds: 3
             periodSeconds: 5
           livenessProbe:
             httpGet:
-              path: app/health
+              path: /app/health
               port: 3000
             initialDelaySeconds: 0
             periodSeconds: 15
+            timeoutSeconds: 3
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: app/ready
+              path: /app/ready
               port: 3000
             initialDelaySeconds: 0
             periodSeconds: 10
+            timeoutSeconds: 3
             failureThreshold: 3
 ---
 apiVersion: v1
