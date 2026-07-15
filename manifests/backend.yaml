@@ -33,20 +33,20 @@ spec:
                 name: backend-secret
           startupProbe:
             httpGet:
-              path: /health
+              path: app/health
               port: 3001
             failureThreshold: 12    # 12 × 5 сек = 1 минута на старт
             periodSeconds: 5
           livenessProbe:
             httpGet:
-              path: /health
+              path: app/health
               port: 3001
             initialDelaySeconds: 0
             periodSeconds: 15
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /ready
+              path: app/ready
               port: 3001
             initialDelaySeconds: 0
             periodSeconds: 10
