@@ -28,9 +28,7 @@ jobs:
           IMAGE: ${{ inputs.image_sha }}
         run: |
           helm upgrade backend-api ./helm/backend-api \
-            --install \
-            --reset-values \
+            --reuse-values \
             --set image.name="$IMAGE" \
             --wait \
             --timeout 4m
-
