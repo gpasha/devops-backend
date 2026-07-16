@@ -28,3 +28,4 @@ Thumbs.db
 coverage/
 
 *secret.yaml
+age-key.txt
