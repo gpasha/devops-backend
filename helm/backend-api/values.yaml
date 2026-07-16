@@ -1,0 +1,27 @@
+image:
+  name: pavelfullstackdeveloper/backend-simple:latest
+ 
+backend:
+  port: 3000
+ 
+resources:
+  requests:
+    cpu: "60m"
+    memory: "100Mi"
+  limits:
+    cpu: "100m"
+    memory: "120Mi"
+ 
+config:
+  NODE_ENV: "production"
+ 
+ingress:
+  host: api.classwork.devops-app.site
+  tlsSecret: backend-api-tls
+  clusterIssuer: letsencrypt-prod
+ 
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  cpuUtilization: 70
+  memoryUtilization: 80
