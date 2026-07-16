@@ -43,7 +43,7 @@ spec:
               cpu: {{ .Values.resources.limits.cpu | quote }}
               memory: {{ .Values.resources.limits.memory | quote }}
           ports:
-            - containerPort: {{ .Values.backend.port | int  }}
+            - containerPort: {{ .Values.backend.port }}
           envFrom:
             - configMapRef:
                 name: backend-config
