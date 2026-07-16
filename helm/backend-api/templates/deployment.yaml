@@ -19,20 +19,20 @@ spec:
           startupProbe:
             httpGet:
               path: /app/health
-              port: {{ .Values.backend.port }}
+              port: {{ .Values.backend.port | int }}
             failureThreshold: 12
             timeoutSeconds: 3
             periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /app/health
-              port: {{ .Values.backend.port }}
+              port: {{ .Values.backend.port | int }}
             periodSeconds: 15
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /app/ready
-              port: {{ .Values.backend.port }}
+              port: {{ .Values.backend.port | int }}
             periodSeconds: 10
             failureThreshold: 3
           resources:
@@ -43,7 +43,7 @@ spec:
               cpu: {{ .Values.resources.limits.cpu | quote }}
               memory: {{ .Values.resources.limits.memory | quote }}
           ports:
-            - containerPort: {{ .Values.backend.port }}
+            - containerPort: {{ .Values.backend.port | int  }}
           envFrom:
             - configMapRef:
                 name: backend-config

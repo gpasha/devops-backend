@@ -21,4 +21,4 @@ spec:
               service:
                 name: backend-api-service
                 port:
-                  number: {{ .Values.backend.port }}
+                  number: {{ .Values.backend.port | int }}
