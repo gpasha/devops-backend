@@ -11,8 +11,6 @@ spec:
       labels:
         app: backend-api
     spec:
-      imagePullSecrets:
-        - name: {{ .Values.image.pullname }}
       containers:
         - name: backend-api
           image: {{ .Values.image.name }}
