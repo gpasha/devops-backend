@@ -19,20 +19,20 @@ spec:
           startupProbe:
             httpGet:
               path: /app/health
-              port: {{ .Values.backend.port | int }}
+              port: {{ .Values.backend.port }}
             failureThreshold: 12
             timeoutSeconds: 3
             periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /app/health
-              port: {{ .Values.backend.port | int }}
+              port: {{ .Values.backend.port }}
             periodSeconds: 15
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /app/ready
-              port: {{ .Values.backend.port | int }}
+              port: {{ .Values.backend.port }}
             periodSeconds: 10
             failureThreshold: 3
           resources:
@@ -46,6 +46,6 @@ spec:
             - containerPort: {{ .Values.backend.port }}
           envFrom:
             - configMapRef:
-                name: backend-config
+                name: backend-api-config
             - secretRef:
-                name: backend-secret
+                name: backend-api-secret
