@@ -19,10 +19,17 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
-
-      - name: Deploy to k3s
+ 
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+  
+      - name: Deploy with Helm
         env:
           IMAGE: ${{ inputs.image_sha }}
         run: |
-          envsubst '$IMAGE' < manifests/backend.yaml | kubectl apply -f -
-          kubectl rollout status deployment/backend-api --timeout=10000s
+          helm upgrade backend-api ./helm/backend-api \
+            --reuse-values \
+            --set image.name="$IMAGE" \
+            --wait \
+            --timeout 4m
+
