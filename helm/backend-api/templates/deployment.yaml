@@ -48,4 +48,4 @@ spec:
             - configMapRef:
                 name: backend-api-config
             - secretRef:
-                name: backend-api-secret
+                name: backend-secret
