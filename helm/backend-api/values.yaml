@@ -1,5 +1,8 @@
 image:
   name: pavelfullstackdeveloper/backend-simple:latest
+
+secret:
+  databaseUrl: ""
  
 backend:
   port: 3000
