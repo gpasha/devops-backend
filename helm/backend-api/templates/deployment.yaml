@@ -12,7 +12,7 @@ spec:
         app: backend-api
     spec:
       imagePullSecrets:
-        - name: {{ .Values.image.pullname }}
+        - name: {{ .Values.image.pullname | quote }}
       containers:
         - name: backend-api
           image: {{ .Values.image.name }}
