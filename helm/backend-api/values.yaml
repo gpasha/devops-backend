@@ -1,6 +1,5 @@
 image:
   name: pavelfullstackdeveloper/backend-simple:latest
-  pullname: dockerhub-cred
  
 backend:
   port: 3000
