@@ -15,12 +15,12 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hi from week6! Deployed for k8s! + Helm (Charts) + SOPS + AGE"', () => {
+    it('should return "Hi from week6! Deployed for k8s! + Helm (Charts) + SOPS + AGE!"', () => {
       if (process.version.startsWith('v25')) {
         throw new Error('Node.js should be < 25');
       }
       expect(appController.getHello()).toBe(
-        'Hi from week6! Deployed for k8s! + Helm (Charts) + SOPS + AGE',
+        'Hi from week6! Deployed for k8s! + Helm (Charts) + SOPS + AGE!',
       );
     });
   });
