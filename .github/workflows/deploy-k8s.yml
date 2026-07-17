@@ -38,6 +38,7 @@ jobs:
         run: |
           helm upgrade backend-api ./helm/backend-api \
             --install \
+            --namespace default \
             -f ./helm/backend-api/values.yaml \
             -f secrets://./helm/backend-api/secrets.yaml \
             --set image.name="$IMAGE" \
