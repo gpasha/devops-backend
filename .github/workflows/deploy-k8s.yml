@@ -48,6 +48,10 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          helm secrets template backend-api ./helm/backend-api \
+          echo "=== Проверяем установленные плагины ==="
+          helm plugin list
+          
+          echo "=== Проверяем генерацию манифестов ==="
+          helm template backend-api ./helm/backend-api \
             -f ./helm/backend-api/values.yaml \
             -f secrets://./helm/backend-api/secrets.yaml
