@@ -24,7 +24,7 @@ jobs:
         uses: azure/setup-helm@v4
 
       - name: Install Helm Secrets Plugin
-        run: 'helm plugin install https://github.com/jkroepke/helm-secrets'
+        run: 'helm plugin install https://github.com/jkroepke/helm-secrets --verify=false'
   
       - name: Deploy with Helm
         env:
