@@ -31,16 +31,23 @@ jobs:
       - name: Install Helm Secrets Plugin
         run: 'helm plugin install https://github.com/jkroepke/helm-secrets --verify=false'
   
-      - name: Deploy with Helm
+      # - name: Deploy with Helm
+      #   env:
+      #     IMAGE: ${{ inputs.image_sha }}
+      #     SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+      #   run: |
+      #     helm upgrade backend-api ./helm/backend-api \
+      #       --install \
+      #       --namespace default \
+      #       -f ./helm/backend-api/values.yaml \
+      #       -f secrets://./helm/backend-api/secrets.yaml \
+      #       --set image.name="$IMAGE" \
+      #       --wait \
+      #       --timeout 4m
+      - name: Debug Helm Template
         env:
-          IMAGE: ${{ inputs.image_sha }}
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          helm upgrade backend-api ./helm/backend-api \
-            --install \
-            --namespace default \
+          helm secrets template backend-api ./helm/backend-api \
             -f ./helm/backend-api/values.yaml \
-            -f secrets://./helm/backend-api/secrets.yaml \
-            --set image.name="$IMAGE" \
-            --wait \
-            --timeout 4m
+            -f secrets://./helm/backend-api/secrets.yaml
