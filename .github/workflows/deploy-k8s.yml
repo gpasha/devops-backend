@@ -13,12 +13,13 @@ jobs:
  
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure kubectl
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
  
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -29,29 +30,19 @@ jobs:
           version: "latest"
 
       - name: Install Helm Secrets Plugin
-        run: 'helm plugin install https://github.com/jkroepke/helm-secrets --verify=false'
+        run: 'helm plugin install https://github.com/jkroepke/helm-secrets --verify=false || true'
   
-      # - name: Deploy with Helm
-      #   env:
-      #     IMAGE: ${{ inputs.image_sha }}
-      #     SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-      #   run: |
-      #     helm upgrade backend-api ./helm/backend-api \
-      #       --install \
-      #       --namespace default \
-      #       -f ./helm/backend-api/values.yaml \
-      #       -f secrets://./helm/backend-api/secrets.yaml \
-      #       --set image.name="$IMAGE" \
-      #       --wait \
-      #       --timeout 4m
-      - name: Debug Helm Template
+      - name: Deploy with Helm
         env:
+          IMAGE: ${{ inputs.image_sha }}
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          echo "=== Проверяем установленные плагины ==="
-          helm plugin list
-          
-          echo "=== Проверяем генерацию манифестов ==="
-          helm template backend-api ./helm/backend-api \
+          helm upgrade backend-api ./helm/backend-api \
+            --install \
+            --namespace default \
             -f ./helm/backend-api/values.yaml \
-            -f secrets://./helm/backend-api/secrets.yaml
+            -f secrets://helm/backend-api/secrets.yaml \
+            --set image.name="$IMAGE" \
+            --wait \
+            --timeout 4m \
+            --atomic
