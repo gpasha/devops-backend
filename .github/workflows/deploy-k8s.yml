@@ -45,4 +45,3 @@ jobs:
             --set image.name="$IMAGE" \
             --wait \
             --timeout 4m \
-            --atomic
