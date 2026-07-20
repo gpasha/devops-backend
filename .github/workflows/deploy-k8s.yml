@@ -29,26 +29,15 @@ jobs:
         with:
           version: "latest"
 
-      - name: Install Helm Secrets Plugin
-        run: 'helm plugin install https://github.com/jkroepke/helm-secrets --verify=false || true'
+      - name: Install Helm
+        uses: azure/setup-helm@v4
   
       - name: Deploy with Helm
         env:
           IMAGE: ${{ inputs.image_sha }}
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          # 1. Применяем чарт без флага --wait, чтобы ресурсы (включая секрет) мгновенно создались
           helm upgrade backend-api ./helm/backend-api \
-            --install \
-            --namespace default \
-            -f ./helm/backend-api/values.yaml \
-            -f secrets://helm/backend-api/secrets.yaml \
+            --reuse-values \
             --set image.name="$IMAGE" \
-            --timeout 2m
-
-          # 2. Даем Kubernetes команду на мягкий перезапуск деплоймента.
-          # Теперь секрет уже точно лежит в кластере, и новые поды его увидят.
-          kubectl rollout restart deployment backend-api --namespace default
-          
-          # 3. Дожидаемся успешного запуска новых подов
-          kubectl rollout status deployment backend-api --namespace default --timeout=2m
+            --wait \
+            --timeout 4m
