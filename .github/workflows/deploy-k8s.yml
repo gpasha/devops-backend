@@ -37,11 +37,18 @@ jobs:
           IMAGE: ${{ inputs.image_sha }}
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
+          # 1. Применяем чарт без флага --wait, чтобы ресурсы (включая секрет) мгновенно создались
           helm upgrade backend-api ./helm/backend-api \
             --install \
             --namespace default \
             -f ./helm/backend-api/values.yaml \
             -f secrets://helm/backend-api/secrets.yaml \
             --set image.name="$IMAGE" \
-            --wait \
-            --timeout 4m \
+            --timeout 2m
+
+          # 2. Даем Kubernetes команду на мягкий перезапуск деплоймента.
+          # Теперь секрет уже точно лежит в кластере, и новые поды его увидят.
+          kubectl rollout restart deployment backend-api --namespace default
+          
+          # 3. Дожидаемся успешного запуска новых подов
+          kubectl rollout status deployment backend-api --namespace default --timeout=2m
