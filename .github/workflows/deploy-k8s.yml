@@ -36,12 +36,8 @@ jobs:
         env:
           IMAGE: ${{ inputs.image_sha }}
         run: |
-            # Пример, если вы используете SOPS для расшифровки перед деплоем
-            sops -d ./helm/backend-api/secrets.enc.yaml > ./helm/backend-api/secrets.yaml
-
-            helm upgrade backend-api ./helm/backend-api \
-              -f ./helm/backend-api/values.yaml \
-              -f ./helm/backend-api/secrets.yaml \
-              --set image.name="$IMAGE" \
-              --wait \
-              --timeout 4m
+          helm upgrade backend-api ./helm/backend-api \
+            --reuse-values \
+            --set image.name="$IMAGE" \
+            --wait \
+            --timeout 4m
