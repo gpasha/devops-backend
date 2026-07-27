@@ -103,14 +103,5 @@ jobs:
             https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           chmod +x /usr/local/bin/argocd
 
-          ARGOCD_FLAGS="--grpc-web --insecure"
-
-          # Подтягиваем свежий коммит из gitops-репо после merge PR
-          argocd app get ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --refresh
-
-          argocd app sync ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --timeout 600
-
-          # По умолчанию wait ждёт Synced + Healthy. Deployment с HPA
-          # остаётся OutOfSync из-за /spec/replicas — ждём операцию и health отдельно.
-          argocd app wait ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --operation --timeout 600
-          argocd app wait ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --health --timeout 600
+          argocd app sync ${{ inputs.argocd_app_name }} --insecure
+          argocd app wait ${{ inputs.argocd_app_name }} --insecure
