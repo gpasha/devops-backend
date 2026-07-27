@@ -28,4 +28,5 @@ Thumbs.db
 coverage/
 
 *secret.yaml
+!**/backend-api/templates/secret.yaml
 age-key.txt
