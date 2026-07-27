@@ -32,7 +32,7 @@ on:
       argocd_auth_token:
         description: ArgoCD auth token
         required: true
- 
+
 jobs:
   update-helm-chart:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
           token: ${{ secrets.gitops_token }}
           ref: ${{ inputs.branch }}
           path: gitops-repo
- 
+
       - name: Install yq
         run: |
           mkdir -p $HOME/.local/bin
@@ -52,12 +52,12 @@ jobs:
             -o $HOME/.local/bin/yq
           chmod +x $HOME/.local/bin/yq
           echo "$HOME/.local/bin" >> $GITHUB_PATH
- 
+
       - name: Update values.yaml
         run: |
           cd gitops-repo
           yq e -i ".image.name = \"${{ inputs.image_name }}\"" "${{ inputs.helm_path }}"
- 
+
       - name: Commit and push to new branch
         run: |
           cd gitops-repo
@@ -68,7 +68,7 @@ jobs:
           git add "${{ inputs.helm_path }}"
           git commit -m "feat(${{ inputs.argocd_app_name }}): update image to ${{ inputs.image_name }}"
           git push origin "$BRANCH_NAME"
- 
+
       - name: Create and merge Pull Request
         run: |
           response=$(curl -sX POST \
@@ -81,15 +81,15 @@ jobs:
               \"head\": \"update-image-${{ github.run_id }}\",
               \"base\": \"${{ inputs.branch }}\"
             }")
- 
+
           PR_NUMBER=$(echo "$response" | python3 -c "import sys,json; print(json.load(sys.stdin)['number'])")
- 
+
           curl -sX PUT \
             -H "Authorization: Bearer ${{ secrets.gitops_token }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ inputs.gitops_repo }}/pulls/$PR_NUMBER/merge \
             -d '{"merge_method": "squash"}'
- 
+
   sync-argocd:
     needs: [update-helm-chart]
     runs-on: ubuntu-latest
@@ -102,6 +102,15 @@ jobs:
           curl -sSL -o /usr/local/bin/argocd \
             https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           chmod +x /usr/local/bin/argocd
- 
-          argocd app sync ${{ inputs.argocd_app_name }} --insecure
-          argocd app wait ${{ inputs.argocd_app_name }} --insecure
+
+          ARGOCD_FLAGS="--grpc-web --insecure"
+
+          # Подтягиваем свежий коммит из gitops-репо после merge PR
+          argocd app get ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --refresh
+
+          argocd app sync ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --timeout 600
+
+          # По умолчанию wait ждёт Synced + Healthy. Deployment с HPA
+          # остаётся OutOfSync из-за /spec/replicas — ждём операцию и health отдельно.
+          argocd app wait ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --operation --timeout 600
+          argocd app wait ${{ inputs.argocd_app_name }} $ARGOCD_FLAGS --health --timeout 600
