@@ -15,10 +15,17 @@ jobs:
 
   deploy:
     needs: [build]
-    uses: ./.github/workflows/deploy-k8s.yml
+    uses: ./.github/workflows/deploy-argocd.yml
     with:
-      image_sha: ${{ needs.build.outputs.image_sha }}
-    secrets: inherit
+      helm_path: HelmCharts/backend-api/values-production.yaml
+      image_name: ${{ needs.build.outputs.image_sha }}
+      branch: main
+      gitops_repo: gpasha/argocd-lessons
+      argocd_app_name: backend-api
+      argocd_server: ${{ vars.ARGOCD_SERVER }}
+    secrets:
+      gitops_token: ${{ secrets.GITOPS_TOKEN }}
+      argocd_auth_token: ${{ secrets.ARGOCD_AUTH_TOKEN }}
 
   notify:
     needs: [checks, build, deploy]
