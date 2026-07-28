@@ -50,7 +50,13 @@ jobs:
             --exclude=node_modules \
             --exclude=dist \
             --exclude=build \
+            --exclude=workflows \
+            --exclude=argocd \
             --exclude=kubernetes \
+            --exclude=deployment \
+            --exclude=helm \
+            --exclude=k8s \
+            --exclude=manifest \
             .
 
   # trivy:
