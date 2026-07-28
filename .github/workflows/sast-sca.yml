@@ -56,7 +56,7 @@ jobs:
             --exclude=deployment \
             --exclude=helm \
             --exclude=k8s \
-            --exclude=manifest \
+            --exclude=manifests \
             .
 
   # trivy:
