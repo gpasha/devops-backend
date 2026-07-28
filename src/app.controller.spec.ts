@@ -15,12 +15,12 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hi from week7! Deployed for k8s! + Helm (Charts) + SOPS + AGE + ARGOCD + deploy-argocd.yaml!"', () => {
+    it('should return "Hi from week7! Deployed for k8s! + Helm (Charts) + SOPS + AGE + ARGOCD + deploy-argocd.yaml + common-chart new!"', () => {
       if (process.version.startsWith('v25')) {
         throw new Error('Node.js should be < 25');
       }
       expect(appController.getHello()).toBe(
-        'Hi from week7! Deployed for k8s! + Helm (Charts) + SOPS + AGE + ARGOCD + deploy-argocd.yaml!',
+        'Hi from week7! Deployed for k8s! + Helm (Charts) + SOPS + AGE + ARGOCD + deploy-argocd.yaml + common-chart new!',
       );
     });
   });
